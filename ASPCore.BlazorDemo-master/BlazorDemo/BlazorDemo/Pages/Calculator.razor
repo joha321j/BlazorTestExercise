@@ -1,0 +1,104 @@
+﻿@page "/calculator"
+
+<h1>Basic Calculator Demo Using Blazor</h1>
+<hr />
+<div>
+    <div class="row">
+        <div class="col-md-3">
+            <p>First Number</p>
+        </div>
+        <div class="col-md-4">
+            <input placeholder="Enter First Number" @bind="@_firstNumber" />
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-3">
+            <p>Second Number</p>
+        </div>
+        <div class="col-md-4">
+            <input placeholder="Enter Second Number" @bind="@_secondNumber" />
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-3">
+            <p>Result</p>
+        </div>
+        <div class="col-md-4">
+            <input readonly @bind="@_finalResult" />
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-2">
+            <button @onclick="AddNumbers" class="btn btn-light">Add (+)</button>
+        </div>
+        <div class="col-md-2">
+            <button @onclick="SubtractNumbers" class="btn btn-primary">Subtract (−)</button>
+        </div>
+        <div class="col-md-2">
+            <button @onclick="MultiplyNumbers" class="btn btn-success ">Multiply (X)</button>
+        </div>
+        <div class="col-md-2">
+            <button @onclick="DivideNumbers" class="btn btn-info">Divide (/)</button>
+        </div>
+        <div class="col-md-2">
+            <button @onclick="TakeSquareRootOfFirstNumber" class="btn btn-info">Square Root (1/2)</button>
+        </div>
+        <div class="col-md-2">
+            <button @onclick="Power" class="btn btn-info">Power (^)</button>
+        </div>
+        <div class="col-md-2">
+            <button @onclick="Reset" class="btn btn-info">C</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    string _firstNumber;
+    string _secondNumber;
+    string _finalResult;
+    
+    void AddNumbers()
+    {
+        _finalResult = (Convert.ToDouble(_firstNumber) + Convert.ToDouble(_secondNumber)).ToString();
+    }
+    
+    void SubtractNumbers()
+    {
+        _finalResult = (Convert.ToDouble(_firstNumber) - Convert.ToDouble(_secondNumber)).ToString();
+    }
+    
+    void MultiplyNumbers()
+    {
+        _finalResult = (Convert.ToDouble(_firstNumber) * Convert.ToDouble(_secondNumber)).ToString();
+    }
+    
+    void DivideNumbers()
+    {
+        _finalResult = 
+            Convert.ToDouble(_secondNumber) != 0 ?
+                (Convert.ToDouble(_firstNumber) / Convert.ToDouble(_secondNumber)).ToString()
+                : "Cannot Divide by Zero";
+    }
+
+    void TakeSquareRootOfFirstNumber()
+    {
+        _finalResult = Math.Sqrt(Convert.ToDouble(_firstNumber)).ToString();
+    }
+
+    void Power()
+    {
+        _finalResult = Math.Pow(Convert.ToDouble(_firstNumber), Convert.ToDouble(_secondNumber))
+                           .ToString();
+    }
+
+    private void Reset()
+    {
+        _firstNumber = "Enter First Number";
+        _secondNumber = "Enter Second Number";
+        _finalResult = String.Empty;
+    }
+
+}
