@@ -1,3 +1,6 @@
+#nullable enable
+using System;
+using System.Collections.Generic;
 using AngleSharp.Dom;
 using BlazorDemo.Pages;
 using Bunit;
@@ -5,7 +8,7 @@ using Xunit;
 
 namespace BlazorDemoTest.Pages
 {
-    public class CalculatorTest: TestContext
+    public sealed class CalculatorTest: TestContext
     {
         private readonly IRenderedComponent<Calculator> _calculatorComponent;
         private readonly IElement _firstInput;
@@ -26,7 +29,7 @@ namespace BlazorDemoTest.Pages
         [Fact]
         public void Should_displayResult_when_addingNumbers()
         {
-            AssertInitialState(_firstInput, _secondInput, _resultInput);
+            VerifyInitialState(_firstInput, _secondInput, _resultInput);
             
             _firstInput.Change("15");
             _secondInput.Change("10");
@@ -39,7 +42,7 @@ namespace BlazorDemoTest.Pages
             Assert.Equal("25", result);
         }
         
-        private static void AssertInitialState(
+        private static void VerifyInitialState(
             IElement firstInput,
             IElement secondInput,
             IElement resultInput)
@@ -52,7 +55,7 @@ namespace BlazorDemoTest.Pages
         [Fact]
         public void Should_displayResult_when_subtractingNumbers()
         {
-            AssertInitialState(_firstInput, _secondInput, _resultInput);
+            VerifyInitialState(_firstInput, _secondInput, _resultInput);
             
             //Act:
             _firstInput.Change("15");
@@ -70,7 +73,7 @@ namespace BlazorDemoTest.Pages
         [Fact]
         public void Should_displayResult_when_multiplyingNumbers()
         {
-            AssertInitialState(_firstInput, _secondInput, _resultInput);
+            VerifyInitialState(_firstInput, _secondInput, _resultInput);
             
             //Act:
             _firstInput.Change("15");
@@ -88,7 +91,7 @@ namespace BlazorDemoTest.Pages
         [Fact]
         public void Should_displayResult_when_dividingNumbers()
         {
-            AssertInitialState(_firstInput, _secondInput, _resultInput);
+            VerifyInitialState(_firstInput, _secondInput, _resultInput);
 
             //Act:
             _firstInput.Change("50");
@@ -106,7 +109,7 @@ namespace BlazorDemoTest.Pages
         [Fact]
         public void Should_displayError_when_dividingByZero()
         {
-            AssertInitialState(_firstInput, _secondInput, _resultInput);
+            VerifyInitialState(_firstInput, _secondInput, _resultInput);
             
             //Act:
             _firstInput.Change("50");
@@ -124,7 +127,7 @@ namespace BlazorDemoTest.Pages
         [Fact]
         public void Should_displayResult_when_calculatingSquareRootOfFirstInput()
         {
-            AssertInitialState(_firstInput, _secondInput, _resultInput);
+            VerifyInitialState(_firstInput, _secondInput, _resultInput);
             
             //Act:
             _firstInput.Change("16");
@@ -138,11 +141,40 @@ namespace BlazorDemoTest.Pages
             var result = _resultInput.GetAttribute("value");
             Assert.Equal("4", result);
         }
+
+        [Theory]
+        [MemberData(nameof(SquareRootData))]
+        public void Should_ignoreSecondInput_when_calculatingSquareRootOfFirstInput(
+            string firstInput,
+            string secondInput,
+            string expectedResult)
+        {
+            _firstInput.Change(firstInput);
+            _secondInput.Change(secondInput);
+            var buttons = 
+                _calculatorComponent.FindAll("button");
+            var addButton = buttons[4];
+            addButton.Click();
+            
+            //Assert:
+            var result = _resultInput.GetAttribute("value");
+            Assert.Equal(expectedResult, result);
+        }
+
+        private static IEnumerable<object[]> SquareRootData()
+        {
+            return new List<object[]>{
+                new object[] {16, 3, 4},
+                new object[] {25, "int.MaxValue", 5},
+                new object[] {0, String.Empty, 0}
+
+            };
+        }
         
         [Fact]
         public void Should_displayNaN_when_calculatingSquareRootOfNegativeInput()
         {
-            AssertInitialState(_firstInput, _secondInput, _resultInput);
+            VerifyInitialState(_firstInput, _secondInput, _resultInput);
             
             //Act:
             _firstInput.Change("-16");
@@ -160,11 +192,11 @@ namespace BlazorDemoTest.Pages
         [Fact]
         public void Should_displayResult_when_calculatingFirstElementUpliftedToThePowerOfSecondElement()
         {
-            AssertInitialState(_firstInput, _secondInput, _resultInput);
+            VerifyInitialState(_firstInput, _secondInput, _resultInput);
             
             //Act:
             _firstInput.Change("16");
-            _secondInput.Change("0");
+            _secondInput.Change("0.5");
             var buttons = 
                 _calculatorComponent.FindAll("button");
             var addButton = buttons[5];
@@ -172,7 +204,7 @@ namespace BlazorDemoTest.Pages
             
             //Assert:
             var result = _resultInput.GetAttribute("value");
-            Assert.Equal("1", result);
+            Assert.Equal("4", result);
         }
 
         [Fact]
@@ -196,7 +228,42 @@ namespace BlazorDemoTest.Pages
             Assert.Equal("Enter Second Number", secondValue);
             string? resultValue = _resultInput.GetAttribute("value");
             Assert.Equal("", resultValue);
+        }
+
+        [Theory]
+        [MemberData(nameof(ButtonData))]
+        public void Should_reset_when_invalidInputIsReceived(int buttonNumber)
+        {
+            VerifyInitialState(_firstInput, _secondInput, _resultInput);
             
+            //Act:
+            _firstInput.Change("Garbage input");
+            _secondInput.Change("super duper ultra garbage input");
+            var buttons = 
+                _calculatorComponent.FindAll("button");
+            var addButton = buttons[buttonNumber];
+            addButton.Click();
+            
+            //Assert:
+            string? firstValue = _firstInput.GetAttribute("value");
+            Assert.Equal("Enter First Number", firstValue);
+            string? secondValue = _secondInput.GetAttribute("value");
+            Assert.Equal("Enter Second Number", secondValue);
+            string? resultValue = _resultInput.GetAttribute("value");
+            Assert.Equal("", resultValue);
+        }
+
+        private static IEnumerable<object[]> ButtonData()
+        {
+            return new List<object[]>
+            {
+                new object[] {0},
+                new object[] {1},
+                new object[] {2},
+                new object[] {3},
+                new object[] {4},
+                new object[] {5}
+            };
         }
     }
 }

@@ -32,25 +32,32 @@
     <br />
     <div class="row">
         <div class="col-md-2">
-            <button @onclick="AddNumbers" class="btn btn-light">Add (+)</button>
+            <button @onclick="() => TryCalculation(AddNumbers)"
+                    class="btn btn-light">Add (+)</button>
         </div>
         <div class="col-md-2">
-            <button @onclick="SubtractNumbers" class="btn btn-primary">Subtract (−)</button>
+            <button @onclick="() => TryCalculation(SubtractNumbers)"
+                    class="btn btn-primary">Subtract (−)</button>
         </div>
         <div class="col-md-2">
-            <button @onclick="MultiplyNumbers" class="btn btn-success ">Multiply (X)</button>
+            <button @onclick="() => TryCalculation(MultiplyNumbers)"
+                    class="btn btn-success ">Multiply (X)</button>
         </div>
         <div class="col-md-2">
-            <button @onclick="DivideNumbers" class="btn btn-info">Divide (/)</button>
+            <button @onclick="() => TryCalculation(DivideNumbers)"
+                    class="btn btn-info">Divide (/)</button>
         </div>
         <div class="col-md-2">
-            <button @onclick="TakeSquareRootOfFirstNumber" class="btn btn-info">Square Root (1/2)</button>
+            <button @onclick="() => TryCalculation(TakeSquareRootOfFirstNumber)"
+                    class="btn btn-info">Square Root (1/2)</button>
         </div>
         <div class="col-md-2">
-            <button @onclick="Power" class="btn btn-info">Power (^)</button>
+            <button @onclick="() => TryCalculation(Power)"
+                    class="btn btn-info">Power (^)</button>
         </div>
         <div class="col-md-2">
-            <button @onclick="Reset" class="btn btn-info">C</button>
+            <button @onclick="Reset"
+                    class="btn btn-info">C</button>
         </div>
     </div>
 </div>
@@ -59,6 +66,18 @@
     string _firstNumber;
     string _secondNumber;
     string _finalResult;
+
+    void TryCalculation(Action calculation)
+    {
+        try
+        {
+            calculation();
+        }
+        catch (FormatException e)
+        {
+            Reset();
+        }
+    }
     
     void AddNumbers()
     {
