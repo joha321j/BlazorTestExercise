@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using AngleSharp.Dom;
 using BlazorDemo.Pages;
+using BlazorDemoTest.DataClasses;
 using Bunit;
 using Xunit;
 
@@ -35,17 +36,20 @@ namespace BlazorDemoTest.Pages
             _resultInput.MarkupMatches("<input readonly=\"\" name=\"resultInput\">");
         }
         
-        [Fact]
-        public void Should_displayResult_when_addingNumbers()
+        [Theory,
+        InlineData("10", "15", "25"),
+        InlineData("111", "123", "234"),
+        InlineData("57", "75", "132")]
+        public void Should_displayResult_when_addingNumbers(string first, string second, string expectedResult)
         {
-            _firstInput.Change("15");
-            _secondInput.Change("10");
+            _firstInput.Change(first);
+            _secondInput.Change(second);
             var buttons = _calculatorComponent.FindAll("button");
             var addButton = buttons[0];
             addButton.Click();
             
             var result = _resultInput.GetAttribute("value");
-            Assert.Equal("25", result);
+            Assert.Equal(expectedResult, result);
         }
 
         [Fact]
@@ -119,7 +123,7 @@ namespace BlazorDemoTest.Pages
         }
 
         [Theory]
-        [MemberData(nameof(SquareRootData))]
+        [ClassData(typeof(Numbers))]
         public void Should_ignoreSecondInput_when_calculatingSquareRootOfFirstInput(
             string firstInput,
             string secondInput,
@@ -136,15 +140,6 @@ namespace BlazorDemoTest.Pages
             Assert.Equal(expectedResult, result);
         }
 
-        private static IEnumerable<object[]> SquareRootData()
-        {
-            return new List<object[]>{
-                new object[] {16, 3, 4},
-                new object[] {25, "int.MaxValue", 5},
-                new object[] {0, String.Empty, 0}
-            };
-        }
-        
         [Fact]
         public void Should_displayNaN_when_calculatingSquareRootOfNegativeInput()
         {
