@@ -8,7 +8,7 @@
             <p>First Number</p>
         </div>
         <div class="col-md-4">
-            <input placeholder="Enter First Number" @bind="@_firstNumber" />
+            <input placeholder="Enter First Number" @bind="@_firstNumber" name="firstNumberInput"/>
         </div>
     </div>
     <br />
@@ -17,7 +17,7 @@
             <p>Second Number</p>
         </div>
         <div class="col-md-4">
-            <input placeholder="Enter Second Number" @bind="@_secondNumber" />
+            <input placeholder="Enter Second Number" @bind="@_secondNumber" name="secondNumberInput"/>
         </div>
     </div>
     <br />
@@ -26,7 +26,7 @@
             <p>Result</p>
         </div>
         <div class="col-md-4">
-            <input readonly @bind="@_finalResult" />
+            <input readonly @bind="@_finalResult" name="resultInput"/>
         </div>
     </div>
     <br />
