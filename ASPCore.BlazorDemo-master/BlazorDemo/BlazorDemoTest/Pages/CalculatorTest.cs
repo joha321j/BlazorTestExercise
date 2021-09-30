@@ -44,7 +44,6 @@ namespace BlazorDemoTest.Pages
             var addButton = buttons[0];
             addButton.Click();
             
-            //Assert:
             var result = _resultInput.GetAttribute("value");
             Assert.Equal("25", result);
         }
@@ -143,7 +142,6 @@ namespace BlazorDemoTest.Pages
                 new object[] {16, 3, 4},
                 new object[] {25, "int.MaxValue", 5},
                 new object[] {0, String.Empty, 0}
-
             };
         }
         
